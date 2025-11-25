@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Pagamento - Plataforma de Cursos{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-4">Ativação do plano</h2>
+    <p class="mb-3">
+      Aqui ficará a simulação de pagamento do curso (mensalidade / acesso vitalício).
+      Para o trabalho, podemos registrar a assinatura do usuário após clicar no botão abaixo.
+    </p>
+
+    <div class="alert alert-info">
+      Nesta versão inicial, o pagamento será apenas simulado.
+    </div>
+
+    <a href="{% url 'home' %}" class="btn btn-success">
+      Simular pagamento e ir para a Home
+    </a>
+  </div>
+</section>
+{% endblock %}
