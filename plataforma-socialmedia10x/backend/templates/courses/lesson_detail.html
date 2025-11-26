@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lesson.title }} - Aula{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <a href="{% url 'courses:module_detail' lesson.module.id %}" class="btn btn-link">
+      &larr; Voltar para o módulo
+    </a>
+
+    <h2 class="mb-3">{{ lesson.title }}</h2>
+
+    {% if lesson.video_url %}
+      <div class="ratio ratio-16x9 mb-4">
+        <iframe
+          src="{{ lesson.video_url }}"
+          title="{{ lesson.title }}"
+          allowfullscreen
+        ></iframe>
+      </div>
+    {% endif %}
+
+    {% if lesson.content %}
+      <div class="mb-4">
+        <h5>Conteúdo complementar</h5>
+        <p>{{ lesson.content }}</p>
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'courses:toggle_lesson_completion' lesson.id %}">
+      {% csrf_token %}
+      {% if progress_obj.completed %}
+        <button type="submit" class="btn btn-outline-warning">
+          Desmarcar como concluída
+        </button>
+        <span class="ms-2 text-success">Você concluiu esta aula.</span>
+      {% else %}
+        <button type="submit" class="btn btn-success">
+          Marcar como concluída
+        </button>
+      {% endif %}
+    </form>
+  </div>
+</section>
+{% endblock %}
