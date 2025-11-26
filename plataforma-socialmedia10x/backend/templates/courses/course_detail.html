@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Curso{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <a href="{% url 'home' %}" class="btn btn-link">&larr; Voltar para a Home</a>
+
+    <h2 class="mb-2">{{ course.title }}</h2>
+    <p class="mb-3">{{ course.description }}</p>
+
+    <div class="mb-4">
+      <label class="form-label">Progresso geral do curso</label>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar"
+             style="width: {{ course_progress }}%;"
+             aria-valuenow="{{ course_progress }}" aria-valuemin="0" aria-valuemax="100">
+          {{ course_progress }}%
+        </div>
+      </div>
+    </div>
+
+    <h4 class="mb-3">Módulos deste curso</h4>
+
+    {% if modules_with_progress %}
+      <div class="row">
+        {% for item in modules_with_progress %}
+          <div class="col-md-6 mb-3">
+            <div class="card section-card">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.module.title }}</h5>
+                {% if item.module.description %}
+                  <p class="card-text text-muted">
+                    {{ item.module.description|truncatewords:20 }}
+                  </p>
+                {% endif %}
+
+                <div class="mb-2">
+                  <label class="form-label mb-1">Progresso no módulo</label>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: {{ item.progress }}%;"
+                         aria-valuenow="{{ item.progress }}"
+                         aria-valuemin="0" aria-valuemax="100">
+                      {{ item.progress }}%
+                    </div>
+                  </div>
+                </div>
+
+                <a href="{% url 'courses:module_detail' item.module.id %}"
+                   class="btn btn-outline-primary btn-sm mt-2">
+                  Acessar módulo
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Este curso ainda não possui módulos cadastrados.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

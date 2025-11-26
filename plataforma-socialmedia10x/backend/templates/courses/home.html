@@ -1,20 +1,50 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - SocialMedia10x{% endblock %}
+{% block title %}Home - Plataforma de Cursos{% endblock %}
 
 {% block content %}
 <section class="py-5">
   <div class="container">
-    <h2 class="mb-4">Olá, {{ request.user.first_name|default:request.user.username }}</h2>
-    <p class="mb-4">
-      Bem-vindo à sua área do aluno.
-      Em breve você verá aqui seus módulos, aulas e progresso.
-    </p>
+    <h2 class="mb-4">Meus cursos</h2>
 
-    <div class="alert alert-info">
-      Esta é uma versão inicial da home. Depois vamos integrar a listagem de módulos,
-      progresso por módulo e acesso direto às aulas.
-    </div>
+    {% if courses_with_progress %}
+      <div class="row">
+        {% for item in courses_with_progress %}
+          <div class="col-md-6 mb-3">
+            <div class="card section-card">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.course.title }}</h5>
+                <p class="card-text text-muted">
+                  {{ item.course.description|truncatewords:25 }}
+                </p>
+
+                <div class="mb-2">
+                  <label class="form-label mb-1">Progresso neste curso</label>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: {{ item.progress }}%;"
+                         aria-valuenow="{{ item.progress }}"
+                         aria-valuemin="0" aria-valuemax="100">
+                      {{ item.progress }}%
+                    </div>
+                  </div>
+                </div>
+
+                <a href="{% url 'courses:course_detail' item.course.slug %}"
+                   class="btn btn-primary btn-sm mt-2">
+                  Acessar curso
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-warning">
+        Nenhum curso cadastrado ainda. Crie cursos no Django Admin.
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
+
