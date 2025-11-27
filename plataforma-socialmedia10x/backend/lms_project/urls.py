@@ -11,4 +11,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),  # login/cadastro/logout
     path('payment/', include('billing.urls')),    # página de pagamento
     path('courses/', include('courses.urls')),    # área de cursos
+    path('api/', include('api.urls')),
 ]
