@@ -2,41 +2,40 @@
 from functools import wraps
 
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
-from .models import Subscription
-
-# billing/decorators.py
-from functools import wraps
-
-from django.shortcuts import redirect
 from .models import Subscription
 
 
 def subscription_required(view_func):
     """
-    Garante que:
-    - Se o usuário NÃO estiver logado → vai para a página de cadastro.
-    - Se estiver logado mas NÃO tiver assinatura ativa → vai para o pagamento.
-    - Se estiver logado e TIVER assinatura ativa → acessa a view normalmente.
+    Regras:
+    - Usuário NÃO autenticado  -> redireciona para 'login';
+    - Usuário logado, SEM assinatura ativa -> redireciona para 'billing:payment';
+    - Usuário logado, COM assinatura ativa -> acessa a view normalmente.
     """
 
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
 
-        # 1) Se não estiver autenticado, manda para o cadastro
+        # 1) Não logado -> vai para página de login
         if not user.is_authenticated:
-            # nome da URL da sua view de cadastro:
-            return redirect("signup")
+            login_url = reverse("login")  # /accounts/login/
+            # mantém o ?next=/home/ pra voltar depois do login
+            return redirect(f"{login_url}?next={request.path}")
 
-        # 2) Se estiver logado, checa se tem assinatura ativa
-        has_subscription = Subscription.objects.filter(user=user, active=True).exists()
+        # 2) Logado -> verificar se existe assinatura ativa
+        has_subscription = Subscription.objects.filter(
+            user=user,
+            active=True,
+        ).exists()
+
         if not has_subscription:
-            # sem assinatura → vai para o fluxo de pagamento
+            # Sem assinatura -> fluxo de pagamento
             return redirect("billing:payment")
 
-        # 3) Tem assinatura ativa → pode acessar
+        # 3) Tem assinatura ativa -> pode acessar
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
