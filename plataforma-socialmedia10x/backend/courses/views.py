@@ -18,20 +18,20 @@ def landing_page(request):
 def home(request):
     """
     Home da plataforma (dashboard):
-    - Só acessa quem tiver assinatura ativa (decorator subscription_required)
+
+    - Só acessa quem tiver assinatura ativa (regras em subscription_required)
     - Lista os cursos com o progresso do aluno logado.
     """
     courses = Course.objects.all()
 
-    courses_with_progress = []
-    for course in courses:
-        progress = course.progress_for_user(request.user)
-        courses_with_progress.append(
-            {
-                "course": course,
-                "progress": progress,
-            }
-        )
+    # mesma lógica de antes, só escrita de forma mais enxuta
+    courses_with_progress = [
+        {
+            "course": course,
+            "progress": course.progress_for_user(request.user),
+        }
+        for course in courses
+    ]
 
     context = {
         "courses_with_progress": courses_with_progress,
@@ -43,21 +43,20 @@ def home(request):
 def course_detail(request, slug):
     """
     Página de um curso específico:
+
     - Mostra informações do curso
     - Lista os módulos com progresso por módulo para o aluno logado.
     """
     course = get_object_or_404(Course, slug=slug)
     modules = course.modules.all()
 
-    modules_with_progress = []
-    for module in modules:
-        progress = module.progress_for_user(request.user)
-        modules_with_progress.append(
-            {
-                "module": module,
-                "progress": progress,
-            }
-        )
+    modules_with_progress = [
+        {
+            "module": module,
+            "progress": module.progress_for_user(request.user),
+        }
+        for module in modules
+    ]
 
     context = {
         "course": course,
@@ -71,6 +70,7 @@ def course_detail(request, slug):
 def module_detail(request, pk):
     """
     Página de um módulo:
+
     - Lista as aulas do módulo
     - Mostra o progresso do usuário nesse módulo.
     """
@@ -83,12 +83,11 @@ def module_detail(request, pk):
             user=request.user,
             lesson=lesson,
         ).first()
-        completed = lp.completed if lp else False
 
         lessons_data.append(
             {
                 "lesson": lesson,
-                "completed": completed,
+                "completed": lp.completed if lp else False,
             }
         )
 
@@ -106,12 +105,13 @@ def module_detail(request, pk):
 def lesson_detail(request, pk):
     """
     Página da aula:
+
     - Mostra o conteúdo/vídeo da aula
-    - Garante que existe um registro de progresso para o usuário
-      (LessonProgress), que será usado para marcar como concluída.
+    - Garante que exista um registro de progresso (LessonProgress)
+      para o usuário logado.
     """
     lesson = get_object_or_404(Lesson, pk=pk)
-    lp, created = LessonProgress.objects.get_or_create(
+    progress_obj, _ = LessonProgress.objects.get_or_create(
         user=request.user,
         lesson=lesson,
         defaults={"completed": False},
@@ -119,7 +119,7 @@ def lesson_detail(request, pk):
 
     context = {
         "lesson": lesson,
-        "progress_obj": lp,
+        "progress_obj": progress_obj,
     }
     return render(request, "courses/lesson_detail.html", context)
 
@@ -128,20 +128,21 @@ def lesson_detail(request, pk):
 def toggle_lesson_completion(request, pk):
     """
     Alterna o status de conclusão da aula para o aluno logado.
+
     - Se for GET, só redireciona de volta para a aula
-    - Se for POST, inverte completed e atualiza completed_at.
+    - Se for POST, inverte `completed` e atualiza `completed_at`.
     """
     if request.method != "POST":
         return redirect("courses:lesson_detail", pk=pk)
 
     lesson = get_object_or_404(Lesson, pk=pk)
-    lp, created = LessonProgress.objects.get_or_create(
+    progress_obj, _ = LessonProgress.objects.get_or_create(
         user=request.user,
         lesson=lesson,
     )
 
-    lp.completed = not lp.completed
-    lp.completed_at = timezone.now() if lp.completed else None
-    lp.save()
+    progress_obj.completed = not progress_obj.completed
+    progress_obj.completed_at = timezone.now() if progress_obj.completed else None
+    progress_obj.save()
 
     return redirect("courses:lesson_detail", pk=pk)

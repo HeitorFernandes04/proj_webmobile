@@ -169,7 +169,7 @@
         box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.25) !important;
         color: #ffffff !important;
     }
-
+    
     footer.bg-dark {
         background-color: var(--preto) !important;
         border-top: 1px solid rgba(255,255,255,0.1);
@@ -179,7 +179,6 @@
     .hero-frase-destaque {
         color: #ffffff !important;
     }
-
     * {
         outline: none !important;
     }
@@ -198,7 +197,7 @@
            alt="SocialMedia10x"
            class="brand-logo-img">
       <span class="brand-text-tagline d-none d-sm-inline">
-        Plataforma de Social Media
+        Plataforma SocialMedia10x
       </span>
     </a>
 
@@ -213,9 +212,6 @@
     <div class="collapse navbar-collapse" id="mainNavbar">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">Minha plataforma</a>
-          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'billing:payment' %}">Meu acesso</a>
           </li>
