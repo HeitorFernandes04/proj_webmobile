@@ -1,37 +1,150 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Home - Plataforma de Cursos{% endblock %}
 
 {% block content %}
-<section class="py-5">
+<style>
+  /* Banner com a mesma imagem da landing */
+  .home-banner-wrapper {
+      width: 100%;
+  }
+
+  .home-banner {
+      width: 100%;
+      height: 160px; /* pode ajustar aqui se quiser maior/menor */
+      background-image:
+          linear-gradient(
+              to right,
+              rgba(0,0,0,0.75),
+              rgba(0,0,0,0.35),
+              rgba(0,0,0,0.85)
+          ),
+          url("{% static 'img/fotodefundo.png' %}");
+      background-size: cover;
+      background-position: center top;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.6);
+  }
+
+  /* Estilo específico da home */
+  #home-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 0; /* mantém um respiro depois do banner */
+  }
+
+  #home-page h2 {
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+  }
+
+  #home-page .home-subtitle {
+      font-size: 0.95rem;
+      color: rgba(245,245,245,0.75);
+      margin-bottom: 1.5rem;
+  }
+
+  .course-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+
+  .course-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+  }
+
+  .course-desc {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.8);
+      margin-bottom: 0.75rem;
+  }
+
+  .course-progress-label {
+      font-size: 0.8rem;
+      color: rgba(245,245,245,0.7);
+  }
+
+  .progress {
+      background-color: rgba(255,255,255,0.1);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+  }
+
+  .progress-bar {
+      background: linear-gradient(90deg, #8A2BE2, #b68cff);
+  }
+
+  .course-footer {
+      font-size: 0.8rem;
+      color: rgba(245,245,245,0.75);
+  }
+
+  @media (max-width: 767.98px) {
+      #home-page {
+          padding: 24px 0;
+      }
+
+      #home-page h2 {
+          font-size: 1.4rem;
+      }
+  }
+</style>
+
+<!-- Banner com a imagem de fundo (mesma da landing) -->
+<section class="home-banner-wrapper">
+  <div class="home-banner"></div>
+</section>
+
+<section id="home-page">
   <div class="container">
-    <h2 class="mb-4">Meus cursos</h2>
+    <div class="mb-3">
+      <h2>Meus cursos</h2>
+      <p class="home-subtitle">
+        Escolha um curso para continuar de onde você parou.
+      </p>
+    </div>
 
     {% if courses_with_progress %}
-      <div class="row">
+      <div class="row g-3">
         {% for item in courses_with_progress %}
-          <div class="col-md-6 mb-3">
-            <div class="card section-card">
+          <div class="col-md-6 col-lg-4">
+            <div class="card section-card course-card">
               <div class="card-body">
-                <h5 class="card-title">{{ item.course.title }}</h5>
-                <p class="card-text text-muted">
+                <h5 class="course-title">{{ item.course.title }}</h5>
+
+                <p class="course-desc">
                   {{ item.course.description|truncatewords:25 }}
                 </p>
 
                 <div class="mb-2">
-                  <label class="form-label mb-1">Progresso neste curso</label>
+                  <div class="d-flex justify-content-between mb-1">
+                    <span class="course-progress-label">Progresso neste curso</span>
+                    <span class="course-progress-label">
+                      {{ item.progress|floatformat:0 }}%
+                    </span>
+                  </div>
                   <div class="progress">
-                    <div class="progress-bar" role="progressbar"
+                    <div class="progress-bar"
+                         role="progressbar"
                          style="width: {{ item.progress }}%;"
-                         aria-valuenow="{{ item.progress }}"
-                         aria-valuemin="0" aria-valuemax="100">
-                      {{ item.progress }}%
+                         aria-valuenow="{{ item.progress|floatformat:0 }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div class="card-footer border-0 bg-transparent d-flex justify-content-between align-items-center course-footer">
+                <span>Continuar assistindo</span>
                 <a href="{% url 'courses:course_detail' item.course.slug %}"
-                   class="btn btn-primary btn-sm mt-2">
+                   class="btn btn-sm btn-primary">
                   Acessar curso
                 </a>
               </div>
@@ -40,11 +153,15 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="alert alert-warning">
-        Nenhum curso cadastrado ainda. Crie cursos no Django Admin.
+      <div class="card">
+        <div class="card-body">
+          <h5 class="course-title mb-2">Nenhum curso disponível ainda</h5>
+          <p class="course-desc mb-0">
+            Assim que um curso for cadastrado para sua conta, ele aparecerá aqui.
+          </p>
+        </div>
       </div>
     {% endif %}
   </div>
 </section>
 {% endblock %}
-

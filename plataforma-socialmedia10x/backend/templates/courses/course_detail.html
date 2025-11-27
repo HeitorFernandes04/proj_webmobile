@@ -3,53 +3,219 @@
 {% block title %}{{ course.title }} - Curso{% endblock %}
 
 {% block content %}
-<section class="py-5">
+<style>
+  /* ===== Estilo específico da página de curso ===== */
+  #course-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 0;
+  }
+
+  #course-page .back-link {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    padding: 6px 14px;
+}
+
+
+  #course-page .course-title {
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+  }
+
+  #course-page .course-description {
+      color: rgba(245,245,245,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+  }
+
+  #course-page .progress-label {
+      font-size: 0.85rem;
+      color: rgba(245,245,245,0.7);
+  }
+
+  #course-page .progress {
+      background-color: rgba(255,255,255,0.1);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+  }
+
+  #course-page .progress-bar {
+      background: linear-gradient(90deg, #8A2BE2, #b68cff);
+  }
+
+  #course-page .stats-card {
+      border-radius: 12px;
+  }
+
+  #course-page .stats-title {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.7);
+      margin-bottom: 0.25rem;
+  }
+
+  #course-page .stats-value {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #ffffff;
+  }
+
+  #course-page .modules-header {
+      margin-top: 24px;
+      margin-bottom: 12px;
+  }
+
+  #course-page .modules-header h4 {
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+  }
+
+  #course-page .modules-header p {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.75);
+      margin: 0;
+  }
+
+  .module-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+
+  .module-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+  }
+
+  .module-desc {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.8);
+      margin-bottom: 0.75rem;
+  }
+
+  .module-progress-label {
+      font-size: 0.8rem;
+      color: rgba(245,245,245,0.7);
+  }
+
+  @media (max-width: 767.98px) {
+      #course-page {
+          padding: 24px 0;
+      }
+  }
+</style>
+
+<section id="course-page">
   <div class="container">
-    <a href="{% url 'home' %}" class="btn btn-link">&larr; Voltar para a Home</a>
 
-    <h2 class="mb-2">{{ course.title }}</h2>
-    <p class="mb-3">{{ course.description }}</p>
+    <a href="{% url 'home' %}"
+   class="btn btn-sm btn-outline-light back-link">
+  ← Voltar para a Home
+</a>
 
-    <div class="mb-4">
-      <label class="form-label">Progresso geral do curso</label>
-      <div class="progress">
-        <div class="progress-bar" role="progressbar"
-             style="width: {{ course_progress }}%;"
-             aria-valuenow="{{ course_progress }}" aria-valuemin="0" aria-valuemax="100">
-          {{ course_progress }}%
+    <!-- header do curso + progresso + stats -->
+    <div class="row g-3">
+      <div class="col-md-8">
+        <h2 class="course-title">{{ course.title }}</h2>
+
+        {% if course.description %}
+          <p class="course-description">
+            {{ course.description }}
+          </p>
+        {% endif %}
+
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="progress-label">Progresso geral do curso</span>
+            <span class="progress-label">
+              {{ course_progress|floatformat:0 }}%
+            </span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar"
+                 role="progressbar"
+                 style="width: {{ course_progress }}%;"
+                 aria-valuenow="{{ course_progress|floatformat:0 }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stats-card section-card h-100">
+          <div class="card-body">
+            <p class="stats-title mb-1">Resumo do curso</p>
+            <p class="stats-value mb-3">
+              {{ modules_with_progress|length }} módulos
+            </p>
+            <p class="mb-1 small text-muted">
+              Avance módulo a módulo para concluir 100% do curso.
+            </p>
+            <p class="mb-0 small text-muted">
+              Seu progresso é atualizado automaticamente conforme você marca
+              as aulas como concluídas.
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <h4 class="mb-3">Módulos deste curso</h4>
+    <!-- módulos -->
+    <div class="modules-header">
+      <h4>Módulos deste curso</h4>
+      <p>Escolha um módulo para ver as aulas e continuar seus estudos.</p>
+    </div>
 
     {% if modules_with_progress %}
-      <div class="row">
+      <div class="row g-3">
         {% for item in modules_with_progress %}
-          <div class="col-md-6 mb-3">
-            <div class="card section-card">
+          <div class="col-md-6 col-lg-4">
+            <div class="card section-card module-card">
               <div class="card-body">
-                <h5 class="card-title">{{ item.module.title }}</h5>
+                <h5 class="module-title">{{ item.module.title }}</h5>
+
                 {% if item.module.description %}
-                  <p class="card-text text-muted">
+                  <p class="module-desc">
                     {{ item.module.description|truncatewords:20 }}
                   </p>
                 {% endif %}
 
                 <div class="mb-2">
-                  <label class="form-label mb-1">Progresso no módulo</label>
+                  <div class="d-flex justify-content-between mb-1">
+                    <span class="module-progress-label">Progresso no módulo</span>
+                    <span class="module-progress-label">
+                      {{ item.progress|floatformat:0 }}%
+                    </span>
+                  </div>
                   <div class="progress">
-                    <div class="progress-bar" role="progressbar"
+                    <div class="progress-bar"
+                         role="progressbar"
                          style="width: {{ item.progress }}%;"
-                         aria-valuenow="{{ item.progress }}"
-                         aria-valuemin="0" aria-valuemax="100">
-                      {{ item.progress }}%
+                         aria-valuenow="{{ item.progress|floatformat:0 }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div class="card-footer border-0 bg-transparent d-flex justify-content-between align-items-center">
+                <span class="module-progress-label">
+                  {% if item.progress >= 100 %}
+                    Módulo concluído
+                  {% else %}
+                    Em andamento
+                  {% endif %}
+                </span>
                 <a href="{% url 'courses:module_detail' item.module.id %}"
-                   class="btn btn-outline-primary btn-sm mt-2">
+                   class="btn btn-sm btn-primary">
                   Acessar módulo
                 </a>
               </div>
@@ -58,8 +224,15 @@
         {% endfor %}
       </div>
     {% else %}
-      <p>Este curso ainda não possui módulos cadastrados.</p>
+      <div class="card mt-3">
+        <div class="card-body">
+          <p class="mb-0">
+            Este curso ainda não possui módulos cadastrados.
+          </p>
+        </div>
+      </div>
     {% endif %}
+
   </div>
 </section>
 {% endblock %}

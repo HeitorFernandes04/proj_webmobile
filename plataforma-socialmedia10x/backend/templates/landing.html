@@ -1,32 +1,130 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Página de Vendas - SocialMedia10x{% endblock %}
 
 {% block content %}
-<section class="py-5">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-6 mb-4 mb-md-0">
-        <h1 class="mb-3 hero-title">Fature 5k por mês como social media!</h1>
-        <p class="hero-subtitle mb-4">
-          Aprenda <strong>TUDO que voce precisa para se tornar um social media de SUCESSO</strong> e consquistar sua independência FINANCEIRA.
-        
-        </p>
-        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg me-2">Começar agora</a>
-        <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg">Já sou aluno</a>
+<style>
+  /* ===== BANNER COM A IMAGEM DE FUNDO ===== */
+  .landing-banner {
+      width: 100%;
+      height: 150px;                /* altura menor da imagem */
+      background-image: url("{% static 'img/fotodefundo.png' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin-bottom: 56px;          /* aumenta o espaço antes do conteúdo */
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+  }
 
-      </div>
+  /* ===== Bloco de conteúdo da landing ===== */
+  #landing-hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 0 40px 0;          /* sem padding em cima, só embaixo */
+  }
+
+  #landing-hero .hero-title {
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+  }
+
+  #landing-hero .hero-frase-destaque {
+      font-size: 1.05rem;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+  }
+
+  #landing-hero .hero-subtitle {
+      font-size: 0.98rem;
+      color: rgba(245,245,245,0.8);
+      margin-bottom: 1.25rem;
+  }
+
+  #landing-hero .cta-group .btn {
+      min-width: 165px;
+  }
+
+  #landing-hero .feature-card {
+      border-radius: 14px;
+  }
+
+  #landing-hero ul {
+      padding-left: 1.2rem;
+  }
+
+  #landing-hero li {
+      margin-bottom: 0.35rem;
+  }
+
+  @media (max-width: 767.98px) {
+      .landing-banner {
+          height: 120px;
+          margin-bottom: 40px;
+      }
+
+      #landing-hero {
+          padding-bottom: 28px;
+      }
+
+      #landing-hero .hero-title {
+          font-size: 1.6rem;
+      }
+  }
+</style>
+
+<!-- BANNER SÓ COM A IMAGEM DE FUNDO -->
+<div class="landing-banner"></div>
+
+<!-- CONTEÚDO DA PÁGINA VINDO DEPOIS DO BANNER -->
+<section id="landing-hero">
+  <div class="container">
+    <div class="row align-items-center gy-4">
+
+      <!-- texto principal -->
       <div class="col-md-6">
-        <div class="p-4 bg-white section-card">
-          <h5 class="mb-3">O que você vai aprender no SOCIALMEDIA10X</h5>
-          <ul class="mb-3">
-            <li>Sair do zero a social media profissional</li>
-            <li>Criar estratégias que vendem</li>
-            <li>Prospectar clientes do jeito certo</li>
-          </ul>
-          <small class="text-muted">* Conteúdo exibido aqui é ilustrativo para o protótipo da disciplina.</small>
+        <h1 class="hero-title">
+          Fature 5k por mês como social media!
+        </h1>
+
+        <p class="hero-frase-destaque">
+          Aprenda <strong>TUDO que você precisa para se tornar um social media de SUCESSO</strong>
+          e conquistar sua independência FINANCEIRA.
+        </p>
+
+        <p class="hero-subtitle">
+          Acesse uma plataforma completa, com módulos organizados, aulas em vídeo,
+          materiais de apoio e acompanhamento do seu progresso passo a passo.
+        </p>
+
+        <div class="cta-group d-flex flex-wrap gap-2">
+          <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
+            Começar agora
+          </a>
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+            Já sou aluno
+          </a>
         </div>
       </div>
+
+      <!-- card lateral com benefícios -->
+      <div class="col-md-6">
+        <div class="card section-card feature-card p-4 h-100">
+          <h5 class="mb-3">O que você vai aprender no SOCIALMEDIA10X</h5>
+          <ul class="mb-3">
+            <li>Sair do zero e se posicionar como social media profissional</li>
+            <li>Criar estratégias de conteúdo que realmente vendem</li>
+            <li>Organizar sua rotina e atender clientes com mais segurança</li>
+            <li>Prospectar e fechar clientes do jeito certo</li>
+          </ul>
+          <small class="text-muted">
+            * Conteúdo exibido aqui é ilustrativo para o protótipo da disciplina de
+            Desenvolvimento Web Mobile.
+          </small>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

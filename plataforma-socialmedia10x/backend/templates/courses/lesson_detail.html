@@ -3,44 +3,171 @@
 {% block title %}{{ lesson.title }} - Aula{% endblock %}
 
 {% block content %}
-<section class="py-5">
+<style>
+  /* ===== Estilo específico da página de aula ===== */
+  #lesson-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 0;
+  }
+
+  /* Botão de voltar */
+  #lesson-page .back-link {
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      border-radius: 999px;
+      padding: 6px 14px;
+  }
+
+  #lesson-page .lesson-title {
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+  }
+
+  #lesson-page .lesson-meta {
+      font-size: 0.85rem;
+      color: rgba(245,245,245,0.7);
+      margin-bottom: 1.5rem;
+  }
+
+  /* Card de vídeo */
+  .lesson-video-card {
+      border-radius: 12px;
+      overflow: hidden;
+  }
+
+  .lesson-video-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #000;
+  }
+
+  /* Conteúdo complementar */
+  .lesson-content-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+  }
+
+  .lesson-content-body {
+      font-size: 0.95rem;
+      color: rgba(245,245,245,0.85);
+      white-space: pre-line;
+  }
+
+  /* Área de status / botão de conclusão */
+  #lesson-page .completion-area {
+      margin-top: 20px;
+  }
+
+  #lesson-page .completion-status {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.8);
+  }
+
+  #lesson-page .badge-concluida {
+      background-color: #28a745;
+  }
+
+  @media (max-width: 767.98px) {
+      #lesson-page {
+          padding: 24px 0;
+      }
+  }
+</style>
+
+<section id="lesson-page">
   <div class="container">
-    <a href="{% url 'courses:module_detail' lesson.module.id %}" class="btn btn-link">
-      &larr; Voltar para o módulo
+
+    <!-- voltar para o módulo -->
+    <a href="{% url 'courses:module_detail' lesson.module.id %}"
+       class="btn btn-sm btn-outline-light back-link">
+      ← Voltar para o módulo
     </a>
 
-    <h2 class="mb-3">{{ lesson.title }}</h2>
+    <!-- título e pequenas infos -->
+    <h2 class="lesson-title">{{ lesson.title }}</h2>
+    <p class="lesson-meta">
+      Aula do módulo: <strong>{{ lesson.module.title }}</strong>
+    </p>
 
-    {% if lesson.video_url %}
-      <div class="ratio ratio-16x9 mb-4">
-        <iframe
-          src="{{ lesson.video_url }}"
-          title="{{ lesson.title }}"
-          allowfullscreen
-        ></iframe>
+    <div class="row g-3">
+      <!-- vídeo / player -->
+      <div class="col-lg-8">
+        <div class="card section-card lesson-video-card mb-3">
+          <div class="card-body">
+            {% if lesson.video_url %}
+              <div class="lesson-video-wrapper ratio ratio-16x9 mb-2">
+                <iframe
+                  src="{{ lesson.get_embed_url }}"
+                  title="{{ lesson.title }}"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen>
+                </iframe>
+              </div>
+              <p class="small text-muted mb-0">
+                Dica: marque a aula como concluída após assistir para atualizar seu progresso.
+              </p>
+            {% else %}
+              <p class="mb-0">
+                Nenhum vídeo cadastrado para esta aula ainda.
+              </p>
+            {% endif %}
+          </div>
+        </div>
       </div>
-    {% endif %}
 
-    {% if lesson.content %}
-      <div class="mb-4">
-        <h5>Conteúdo complementar</h5>
-        <p>{{ lesson.content }}</p>
+      <!-- conteúdo complementar + status -->
+      <div class="col-lg-4">
+        <div class="card section-card h-100">
+          <div class="card-body d-flex flex-column justify-content-between">
+
+            <div>
+              <p class="lesson-content-title">Conteúdo complementar</p>
+              {% if lesson.content %}
+                <p class="lesson-content-body">
+                  {{ lesson.content }}
+                </p>
+              {% else %}
+                <p class="lesson-content-body">
+                  Esta aula não possui material de apoio cadastrado ainda.
+                </p>
+              {% endif %}
+            </div>
+
+            <div class="completion-area mt-3">
+              <form method="post" action="{% url 'courses:toggle_lesson_completion' lesson.id %}">
+                {% csrf_token %}
+
+                {% if progress_obj.completed %}
+                  <div class="mb-2">
+                    <span class="badge badge-concluida">Aula concluída</span>
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-outline-light">
+                    Desmarcar como concluída
+                  </button>
+                  <p class="completion-status mt-2 mb-0">
+                    Você já concluiu esta aula. Se precisar revisar, é só assistir novamente.
+                  </p>
+                {% else %}
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    Marcar como concluída
+                  </button>
+                  <p class="completion-status mt-2 mb-0">
+                    Ao marcar como concluída, o progresso do módulo e do curso será atualizado.
+                  </p>
+                {% endif %}
+              </form>
+            </div>
+
+          </div>
+        </div>
       </div>
-    {% endif %}
+    </div>
 
-    <form method="post" action="{% url 'courses:toggle_lesson_completion' lesson.id %}">
-      {% csrf_token %}
-      {% if progress_obj.completed %}
-        <button type="submit" class="btn btn-outline-warning">
-          Desmarcar como concluída
-        </button>
-        <span class="ms-2 text-success">Você concluiu esta aula.</span>
-      {% else %}
-        <button type="submit" class="btn btn-success">
-          Marcar como concluída
-        </button>
-      {% endif %}
-    </form>
   </div>
 </section>
 {% endblock %}
