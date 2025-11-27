@@ -1,5 +1,14 @@
-from django.apps import AppConfig
+# backend/accounts/admin.py
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-class AccountsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'accounts'
+from .models import User  # seu modelo custom de usuário
+
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    """
+    Admin do usuário.
+    Você pode customizar os fieldsets depois, se quiser.
+    """
+    pass

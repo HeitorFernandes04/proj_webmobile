@@ -9,6 +9,7 @@ from .forms import CustomUserCreationForm
 
 class CustomLoginView(LoginView):
     template_name = "accounts/login.html"
+    # se quiser depois, dá pra sobrescrever get_success_url pra checar se o usuário já pagou
 
 
 def logout_view(request):
@@ -29,8 +30,10 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("payment")
+            # redireciona direto para o fluxo de pagamento (Mercado Pago)
+            return redirect("billing:payment")  # <<< ajuste importante
     else:
         form = CustomUserCreationForm()
 
     return render(request, "accounts/signup.html", {"form": form})
+

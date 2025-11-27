@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado do pagamento{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h2 class="mb-3">Status do pagamento</h2>
+    <p>{{ message }}</p>
+
+    {% if payment %}
+      <ul class="mt-3">
+        <li><strong>ID interno:</strong> {{ payment.id }}</li>
+        <li><strong>Plano:</strong> {{ payment.plan.name }}</li>
+        <li><strong>Valor:</strong> R$ {{ payment.amount }}</li>
+        <li><strong>Status interno:</strong> {{ payment.get_status_display }}</li>
+        <li><strong>Status Mercado Pago:</strong> {{ payment.mp_status }}</li>
+        <li><strong>MP Payment ID:</strong> {{ payment.mp_payment_id }}</li>
+      </ul>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-primary mt-4">Ir para a plataforma</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from billing.decorators import subscription_required
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
@@ -12,12 +13,12 @@ def landing_page(request):
     return render(request, "landing.html")
 
 
-@login_required
+@subscription_required
 def home(request):
     """
     Home da plataforma:
-    - Lista todos os cursos disponíveis
-    - Mostra o progresso do usuário em cada curso
+    - Só acessa quem tiver assinatura ativa
+    - Lista os cursos com progresso
     """
     courses = Course.objects.all()
 
