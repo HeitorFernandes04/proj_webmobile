@@ -8,24 +8,246 @@
 
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+    :root {
+        --roxo: #8A2BE2;
+        --roxo-escuro: #663399;
+        --preto: #101010;
+        --branco: #FFFFFF;
+    }
+
+    /* Fundo geral */
+    body {
+        background: radial-gradient(circle at top left, #24113d 0, #050509 40%, #000000 100%) !important;
+        color: #f5f5f5 !important;
+    }
+
+    /* ================= NAVBAR ================= */
+    .navbar {
+        background: linear-gradient(90deg, var(--roxo-escuro), var(--roxo)) !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+    }
+
+    .navbar-brand,
+    .navbar .nav-link,
+    .navbar .text-white {
+        color: #ffffff !important;
+    }
+
+    .navbar .nav-link.active {
+        font-weight: 600;
+    }
+
+    .navbar .nav-link:hover,
+    .navbar-brand:hover {
+        color: #f5f5f5 !important;
+    }
+
+    
+.brand-logo-img {
+    height: 68px;      /* pode testar 60, 64, etc. */
+    width: auto;
+    display: block;
+}
+
+/* reduz o padding vertical da navbar */
+.navbar {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+    .brand-text-tagline {
+        font-size: 0.7rem;
+        opacity: 0.85;
+        margin-left: 8px;
+    }
+    .user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.15);
+        color: #ffffff;
+        font-size: 0.8rem;
+        margin-right: 10px;
+    }
+
+    .user-avatar-circle {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background-color: var(--roxo) !important;
+        border-color: var(--roxo) !important;
+        color: #ffffff !important;
+        border-radius: 999px;
+        padding-inline: 18px;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: #9b4bff !important;
+        border-color: #9b4bff !important;
+    }
+
+    .btn-outline-light {
+        border-color: #ffffff !important;
+        color: #ffffff !important;
+        border-radius: 999px;
+        padding-inline: 18px;
+    }
+
+    .btn-outline-light:hover {
+        background-color: rgba(255,255,255,0.15) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-danger {
+        background-color: #ff4b6a !important;
+        border-color: #ff4b6a !important;
+        border-radius: 999px;
+        padding-inline: 18px;
+    }
+
+    .card,
+    .bg-light,
+    .bg-white {
+        background-color: #15151b !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        color: #f5f5f5 !important;
+    }
+
+    .card-title,
+    .card-text,
+    .card-body {
+        color: #f5f5f5 !important;
+    }
+
+    .text-white-50 {
+        color: rgba(255,255,255,0.8) !important;
+    }
+
+    .text-muted,
+    .form-text {
+        color: rgba(255,255,255,0.7) !important;
+    }
+    label,
+    .form-label {
+        color: #ffffff !important;
+    }
+
+    .form-control {
+        background-color: #181820 !important;
+        border-color: rgba(255,255,255,0.16) !important;
+        color: #ffffff !important;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.6) !important;
+    }
+
+    .form-control:focus {
+        background-color: #181820 !important;
+        border-color: var(--roxo) !important;
+        box-shadow: 0 0 0 0.2rem rgba(138, 43, 226, 0.25) !important;
+        color: #ffffff !important;
+    }
+
+    footer.bg-dark {
+        background-color: var(--preto) !important;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.8) !important;
+    }
+
+    .hero-frase-destaque {
+        color: #ffffff !important;
+    }
+
+    * {
+        outline: none !important;
+    }
+
+    </style>
+
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'landing' %}">SOCIALMEDIA10X</a>
 
-    <div class="ms-auto">
-      {% if user.is_authenticated %}
-        <span class="text-white me-3">
-          Olá, {{ user.first_name|default:user.username }}
-        </span>
-        <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm me-2">Entrar</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Sair</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Entrar</a>
-        <a href="{% url 'signup' %}" class="btn btn-primary btn-sm">Começar agora</a>
-      {% endif %}
+    <!-- LOGO / BRAND -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'landing' %}">
+      <img src="{% static 'img/socialmedia10x-logo.png.png' %}"
+           alt="SocialMedia10x"
+           class="brand-logo-img">
+      <span class="brand-text-tagline d-none d-sm-inline">
+        Plataforma de Social Media
+      </span>
+    </a>
+
+    <!-- botão mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- ITENS DA NAVBAR -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Minha plataforma</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'billing:payment' %}">Meu acesso</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'landing' %}">Início</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <div class="d-flex align-items-center">
+        {% if user.is_authenticated %}
+          <div class="user-chip">
+            <div class="user-avatar-circle">
+              {{ user.first_name|default:user.username|first|upper }}
+            </div>
+            <span>
+              Olá, {{ user.first_name|default:user.username }}
+            </span>
+          </div>
+          <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">
+            Sair
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-sm btn-outline-light me-2">
+            Entrar
+          </a>
+          <a href="{% url 'signup' %}" class="btn btn-sm btn-primary">
+            Começar agora
+          </a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </nav>

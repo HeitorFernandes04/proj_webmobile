@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from urllib.parse import urlparse, parse_qs  # <- para tratar URLs do YouTube
 
 User = settings.AUTH_USER_MODEL  # ainda usamos no LessonProgress
 
@@ -96,7 +97,11 @@ class Lesson(models.Model):
     video_url = models.URLField(
         "URL do vídeo",
         blank=True,
-        help_text="URL do vídeo (ex: link incorporável do YouTube)."
+        help_text=(
+            "Cole o link do YouTube (ex: https://www.youtube.com/watch?v=ID "
+            "ou https://youtu.be/ID). A plataforma converte para embed "
+            "automaticamente."
+        ),
     )
     content = models.TextField(
         "Conteúdo complementar",
@@ -117,6 +122,38 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_embed_url(self):
+        """
+        Retorna a URL em formato embed para players como o YouTube.
+
+        Aceita:
+        - https://www.youtube.com/watch?v=VIDEOID
+        - https://youtu.be/VIDEOID
+
+        Se não reconhecer como YouTube, devolve a URL original.
+        """
+        if not self.video_url:
+            return ""
+
+        url = self.video_url.strip()
+        parsed = urlparse(url)
+
+        # Formato padrão: youtube.com/watch?v=VIDEOID
+        if "youtube.com" in parsed.netloc:
+            qs = parse_qs(parsed.query)
+            video_id = qs.get("v", [None])[0]
+            if video_id:
+                return f"https://www.youtube.com/embed/{video_id}"
+
+        # Formato encurtado: youtu.be/VIDEOID
+        if "youtu.be" in parsed.netloc:
+            video_id = parsed.path.lstrip("/")
+            if video_id:
+                return f"https://www.youtube.com/embed/{video_id}"
+
+        # Fallback
+        return url
 
 
 class LessonProgress(models.Model):
@@ -147,3 +184,4 @@ class LessonProgress(models.Model):
     def __str__(self):
         status = "OK" if self.completed else "Pendente"
         return f"{self.user} - {self.lesson} ({status})"
+
