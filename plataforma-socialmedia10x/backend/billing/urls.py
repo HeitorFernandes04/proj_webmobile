@@ -1,6 +1,12 @@
+# billing/urls.py
 from django.urls import path
-from .views import payment_view
+from . import views
+
+app_name = "billing"
 
 urlpatterns = [
-    path("", payment_view, name="payment"),
+    path("", views.payment_view, name="payment"),
+    path("sucesso/", views.payment_success, name="payment_success"),
+    path("pendente/", views.payment_pending, name="payment_pending"),
+    path("falha/", views.payment_failure, name="payment_failure"),
 ]
